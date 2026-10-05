@@ -1,0 +1,9 @@
+# 1. Ignorar todo el contenido de la raíz
+/*
+
+# 2. Permitir el rastreo del archivo .gitignore
+!.gitignore
+
+# 3. Permitir únicamente el archivo C y la carpeta deseada
+!led_blinky.c
+!frdmmcxa156/
