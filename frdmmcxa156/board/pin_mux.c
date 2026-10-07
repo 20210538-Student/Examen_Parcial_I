@@ -17,6 +17,7 @@ pin_labels:
 - {pin_num: '100', pin_signal: P1_7/TRIG_OUT2/LPUART2_CTS_B/CT_INP7/CT4_MAT1/FLEXIO0_D15, label: SW_2, identifier: SW_2}
 - {pin_num: '78', pin_signal: P0_2/TDO/SWO/LPUART0_RXD/LPSPI0_SCK/CT0_MAT0/UTICK_CAP0/FLEXIO0_D2, label: RX, identifier: RX}
 - {pin_num: '79', pin_signal: P0_3/TDI/LPUART0_TXD/LPSPI0_SDO/CT0_MAT1/UTICK_CAP1/FLEXIO0_D3/CMP0_OUT, label: TX, identifier: TX}
+- {pin_num: '89', pin_signal: P0_22/LPUART0_RTS_B/CT_INP2/CT0_MAT0/FLEXIO0_D6, label: PWM_OUT, identifier: PWM_OUT}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -49,6 +50,7 @@ BOARD_InitPins:
   - {pin_num: '79', peripheral: LPUART0, signal: TX, pin_signal: P0_3/TDI/LPUART0_TXD/LPSPI0_SDO/CT0_MAT1/UTICK_CAP1/FLEXIO0_D3/CMP0_OUT}
   - {pin_num: '100', peripheral: GPIO1, signal: 'GPIO, 7', pin_signal: P1_7/TRIG_OUT2/LPUART2_CTS_B/CT_INP7/CT4_MAT1/FLEXIO0_D15, direction: INPUT, gpio_per_interrupt: kGPIO_InterruptFallingEdge,
     pull_select: up, pull_enable: enable}
+  - {pin_num: '89', peripheral: CTIMER0, signal: 'MATCH, 0', pin_signal: P0_22/LPUART0_RTS_B/CT_INP2/CT0_MAT0/FLEXIO0_D6}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 /* clang-format on */
@@ -75,6 +77,8 @@ void BOARD_InitPins(void)
     RESET_ReleasePeripheralReset(kLPUART0_RST_SHIFT_RSTn);
     /* PORT0 peripheral is released from reset */
     RESET_ReleasePeripheralReset(kPORT0_RST_SHIFT_RSTn);
+    /* CTIMER0 peripheral is released from reset */
+    RESET_ReleasePeripheralReset(kCTIMER0_RST_SHIFT_RSTn);
     /* GPIO1 peripheral is released from reset */
     RESET_ReleasePeripheralReset(kGPIO1_RST_SHIFT_RSTn);
     /* PORT1 peripheral is released from reset */
@@ -99,6 +103,16 @@ void BOARD_InitPins(void)
 
                      /* Input Buffer Enable: Enables. */
                      | PORT_PCR_IBE(PCR_IBE_ibe1));
+
+    PORT0->PCR[22] = ((PORT0->PCR[22] &
+                       /* Mask bits to zero which are setting */
+                       (~(PORT_PCR_MUX_MASK | PORT_PCR_IBE_MASK)))
+
+                      /* Pin Multiplex Control: PORT0_22 (pin 89) is configured as CT0_MAT0. */
+                      | PORT_PCR_MUX(PORT0_PCR22_MUX_mux101)
+
+                      /* Input Buffer Enable: Enables. */
+                      | PORT_PCR_IBE(PCR_IBE_ibe1));
 
     /* PORT0_3 (pin 79) is configured as LPUART0_TXD */
     PORT_SetPinMux(BOARD_INITPINS_TX_PORT, BOARD_INITPINS_TX_PIN, kPORT_MuxAlt2);

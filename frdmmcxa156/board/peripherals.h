@@ -10,6 +10,8 @@
  * Included files
  **********************************************************************************************************************/
 #include "fsl_common.h"
+#include "fsl_ctimer.h"
+#include "fsl_clock.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -23,6 +25,25 @@ extern "C" {
 #define SW2_IRQN GPIO1_IRQn
 /* NVIC interrupt handler identifier. */
 #define SW2_IRQHANDLER GPIO1_IRQHandler
+/* Definition of peripheral ID */
+#define CTIMER0_PERIPHERAL CTIMER0
+/* Timer tick frequency in Hz (input frequency of the timer) */
+#define CTIMER0_TICK_FREQ 1000000UL
+/* Timer tick period in ns (input period of the timer) */
+#define CTIMER0_TICK_PERIOD 1000UL
+/* Definition of PWM period channel. */
+#define CTIMER0_PWM_PERIOD_CH kCTIMER_Match_1
+/* Definition of PWM period */
+#define CTIMER0_PWM_PERIOD 9
+/* Definition of channel 0 ID */
+#define CTIMER0_PWM_0_CHANNEL kCTIMER_Match_0
+/* Definition of channel 0 duty */
+#define CTIMER0_PWM_0_DUTY 2
+
+/***********************************************************************************************************************
+ * Global variables
+ **********************************************************************************************************************/
+extern const ctimer_config_t CTIMER0_config;
 
 /***********************************************************************************************************************
  * Initialization functions

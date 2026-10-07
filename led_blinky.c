@@ -37,6 +37,14 @@ void SW2_IRQHANDLER(void){ // Interrupt function for SW2
     GPIO_PortClearInterruptFlags(BOARD_INITPINS_SW_2_GPIO, 7U << BOARD_INITPINS_SW_2_GPIO_PIN);
 }
 
+void PWM_updater(void){ // Interrupt function for PWM
+    uint32_t j;
+    PRINTF("Ingrese el valor de PWM: ");
+    SCANF("%d", &j);
+    PRINTF("PWM update\r\n");
+    CTIMER_UpdatePwmDutycycle(CTIMER0_PERIPHERAL, CTIMER0_PWM_PERIOD_CH, CTIMER0_PWM_0_CHANNEL, j);
+}
+
 int main(void)
 {
     /* Board pin init */
@@ -47,5 +55,6 @@ int main(void)
     {
         PRINTF("Estamos dentro del bucle\n");
         SDK_DelayAtLeastUs(DELAY_TIME, SystemCoreClock);
+        PWM_updater();
     }
 }
