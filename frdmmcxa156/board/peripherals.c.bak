@@ -72,9 +72,9 @@ instance:
       - 0: []
     - interrupts:
       - 0:
-        - channelId: 'SW2'
+        - channelId: 'SW_2'
         - interrupt_t:
-          - IRQn: 'GPIO1_IRQn'
+          - IRQn: 'SysTick_IRQn'
           - enable_interrrupt: 'enabled'
           - enable_priority: 'false'
           - priority: '0'
@@ -91,8 +91,8 @@ static void NVIC_init(void) {
  **********************************************************************************************************************/
 static void BOARD_InitPeripherals_CommonPostInit(void)
 {
-  /* Enable interrupt SW2_IRQN request in the NVIC */
-  EnableIRQ(SW2_IRQN);
+  /* Enable interrupt SW_2_IRQN request in the NVIC */
+  EnableIRQ(SW_2_IRQN);
 }
 
 void BOARD_InitPeripherals(void)

@@ -19,21 +19,21 @@ mcux_add_include(
 )
 
 mcux_add_source(
-    SOURCES frdmmcxa156/clock_config.c
-            frdmmcxa156/clock_config.h
+    SOURCES board/clock_config.c
+            board/clock_config.h
 )
 
 mcux_add_include(
-    INCLUDES frdmmcxa156
+    INCLUDES board
 )
 
 mcux_add_source(
-    SOURCES led_blinky/pin_mux.c
-            led_blinky/pin_mux.h
+    SOURCES board/pin_mux.c
+            board/pin_mux.h
 )
 
 mcux_add_include(
-    INCLUDES led_blinky
+    INCLUDES board
 )
 
 mcux_add_source(

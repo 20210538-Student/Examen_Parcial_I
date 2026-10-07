@@ -20,9 +20,9 @@ extern "C" {
  **********************************************************************************************************************/
 /* Definitions for BOARD_InitPeripherals functional group */
 /* NVIC interrupt vector ID (number). */
-#define SW2_IRQN GPIO1_IRQn
+#define SW_2_IRQN SysTick_IRQn
 /* NVIC interrupt handler identifier. */
-#define SW2_IRQHANDLER GPIO1_IRQHandler
+#define SW_2_IRQHANDLER SysTick_Handler
 
 /***********************************************************************************************************************
  * Initialization functions
