@@ -52,7 +52,7 @@ void BOARD_InitBootClocks(void);
 #define BOARD_BOOTCLOCKFRO12M_CMP1FDIV_CLOCK          0UL            /* Clock consumers of CMP1FDIV_clock output : CMP1 */
 #define BOARD_BOOTCLOCKFRO12M_CMP1RRDIV_CLOCK         0UL            /* Clock consumers of CMP1RRDIV_clock output : CMP1 */
 #define BOARD_BOOTCLOCKFRO12M_CPU_CLOCK               12000000UL     /* Clock consumers of CPU_clock output : N/A */
-#define BOARD_BOOTCLOCKFRO12M_CTIMER0_CLOCK           0UL            /* Clock consumers of CTIMER0_clock output : CTIMER0 */
+#define BOARD_BOOTCLOCKFRO12M_CTIMER0_CLOCK           12000000UL     /* Clock consumers of CTIMER0_clock output : CTIMER0 */
 #define BOARD_BOOTCLOCKFRO12M_CTIMER1_CLOCK           0UL            /* Clock consumers of CTIMER1_clock output : CTIMER1 */
 #define BOARD_BOOTCLOCKFRO12M_CTIMER2_CLOCK           0UL            /* Clock consumers of CTIMER2_clock output : CTIMER2 */
 #define BOARD_BOOTCLOCKFRO12M_CTIMER3_CLOCK           0UL            /* Clock consumers of CTIMER3_clock output : CTIMER3 */

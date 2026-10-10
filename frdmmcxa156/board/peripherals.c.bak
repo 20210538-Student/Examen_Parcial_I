@@ -70,6 +70,7 @@ instance:
   - nvic:
     - interrupt_table:
       - 0: []
+      - 1: []
     - interrupts:
       - 0:
         - channelId: 'SW2'
@@ -87,6 +88,144 @@ static void NVIC_init(void) {
 } */
 
 /***********************************************************************************************************************
+ * CTIMER0 initialization code
+ **********************************************************************************************************************/
+/* clang-format off */
+/* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
+instance:
+- name: 'CTIMER0'
+- type: 'ctimer'
+- mode: 'PWM'
+- custom_name_enabled: 'false'
+- type_id: 'ctimer_2.2.2'
+- functional_group: 'BOARD_InitPeripherals'
+- peripheral: 'CTIMER0'
+- config_sets:
+  - fsl_ctimer:
+    - ctimerConfig:
+      - mode: 'kCTIMER_TimerMode'
+      - clockSource: 'FunctionClock'
+      - clockSourceFreq: 'ClocksTool_DefaultInit'
+      - timerPrescaler: '12'
+    - EnableTimerInInit: 'true'
+    - pwmConfig:
+      - pwmPeriodChannel: 'kCTIMER_Match_1'
+      - pwmPeriodValueStr: '1khz'
+      - enableInterrupt: 'false'
+      - pwmChannels:
+        - 0:
+          - pwmChannelPrefixId: 'PWM_0'
+          - pwmChannel: 'kCTIMER_Match_0'
+          - pwmDutyValueStr: '0.25ms'
+          - enableInterrupt: 'false'
+    - interruptCallbackConfig:
+      - interrupt:
+        - IRQn: 'CTIMER0_IRQn'
+        - enable_priority: 'false'
+        - priority: '0'
+      - callback: 'kCTIMER_NoCallback'
+ * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
+/* clang-format on */
+const ctimer_config_t CTIMER0_config = {
+  .mode = kCTIMER_TimerMode,
+  .input = kCTIMER_Capture_0,
+  .prescale = 11
+};
+
+static void CTIMER0_init(void) {
+  /* CTIMER0 peripheral initialization */
+  CTIMER_Init(CTIMER0_PERIPHERAL, &CTIMER0_config);
+  /* PWM channel 0 of CTIMER0 peripheral initialization */
+  CTIMER_SetupPwmPeriod(CTIMER0_PERIPHERAL, CTIMER0_PWM_PERIOD_CH, CTIMER0_PWM_0_CHANNEL, CTIMER0_PWM_PERIOD, CTIMER0_PWM_0_DUTY, false);
+  /* Start the timer */
+  CTIMER_StartTimer(CTIMER0_PERIPHERAL);
+}
+
+/***********************************************************************************************************************
+ * LPUART0 initialization code
+ **********************************************************************************************************************/
+/* clang-format off */
+/* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
+instance:
+- name: 'LPUART0'
+- type: 'lpuart'
+- mode: 'interrupts'
+- custom_name_enabled: 'false'
+- type_id: 'lpuart_2.11.0'
+- functional_group: 'BOARD_InitPeripherals'
+- peripheral: 'LPUART0'
+- config_sets:
+  - lpuartConfig_t:
+    - lpuartConfig:
+      - clockSource: 'LpuartClock'
+      - lpuartSrcClkFreq: 'ClocksTool_DefaultInit'
+      - baudRate_Bps: '115200'
+      - parityMode: 'kLPUART_ParityDisabled'
+      - dataBitsCount: 'kLPUART_EightDataBits'
+      - isMsb: 'false'
+      - stopBitCount: 'kLPUART_OneStopBit'
+      - enableMatchAddress1: 'false'
+      - matchAddress1: '0'
+      - enableMatchAddress2: 'false'
+      - matchAddress2: '0'
+      - txFifoWatermark: '0'
+      - rxFifoWatermark: '1'
+      - enableRxRTS: 'false'
+      - enableTxRTS: 'false'
+      - enableTxCTS: 'false'
+      - txCtsSource: 'kLPUART_CtsSourcePin'
+      - txCtsConfig: 'kLPUART_CtsSampleAtStart'
+      - txRtsPolarity: 'kLPUART_RtsPolarityLow'
+      - rtsWatermark: '0'
+      - rxIdleType: 'kLPUART_IdleTypeStartBit'
+      - rxIdleConfig: 'kLPUART_IdleCharacter1'
+      - enableTx: 'true'
+      - enableRx: 'true'
+      - inverseTxd: 'false'
+    - quick_selection: 'QuickSelection1'
+  - interruptsCfg:
+    - interrupts: 'kLPUART_RxDataRegFullInterruptEnable kLPUART_RxOverrunInterruptEnable'
+    - interrupt_vectors:
+      - enable_rx_tx_irq: 'true'
+      - interrupt_rx_tx:
+        - IRQn: 'LPUART0_IRQn'
+        - enable_interrrupt: 'enabled'
+        - enable_priority: 'false'
+        - priority: '0'
+        - enable_custom_name: 'true'
+        - handler_custom_name: 'LPUART0_SRX'
+ * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
+/* clang-format on */
+const lpuart_config_t LPUART0_config = {
+  .baudRate_Bps = 115200UL,
+  .parityMode = kLPUART_ParityDisabled,
+  .dataBitsCount = kLPUART_EightDataBits,
+  .isMsb = false,
+  .stopBitCount = kLPUART_OneStopBit,
+  .txFifoWatermark = 0U,
+  .rxFifoWatermark = 1U,
+  .enableRxRTS = false,
+  .enableTxRTS = false,
+  .enableTxCTS = false,
+  .txCtsSource = kLPUART_CtsSourcePin,
+  .txCtsConfig = kLPUART_CtsSampleAtStart,
+  .txRtsPolarity = kLPUART_RtsPolarityLow,
+  .rtsWatermark = 0U,
+  .rxIdleType = kLPUART_IdleTypeStartBit,
+  .rxIdleConfig = kLPUART_IdleCharacter1,
+  .enableTx = true,
+  .enableRx = true,
+  .inverseTxd = false
+};
+
+static void LPUART0_init(void) {
+  LPUART_Init(LPUART0_PERIPHERAL, &LPUART0_config, LPUART0_CLOCK_SOURCE);
+  LPUART_EnableInterrupts(LPUART0_PERIPHERAL, kLPUART_RxDataRegFullInterruptEnable | kLPUART_RxOverrunInterruptEnable);
+  /* Enable interrupt LPUART0_SERIAL_RX_TX_IRQN request in the NVIC */
+  EnableIRQ(LPUART0_SERIAL_RX_TX_IRQN);
+}
+
+/***********************************************************************************************************************
  * Initialization functions
  **********************************************************************************************************************/
 static void BOARD_InitPeripherals_CommonPostInit(void)
@@ -98,6 +237,8 @@ static void BOARD_InitPeripherals_CommonPostInit(void)
 void BOARD_InitPeripherals(void)
 {
   /* Initialize components */
+  CTIMER0_init();
+  LPUART0_init();
   /* Common post-initialization */
   BOARD_InitPeripherals_CommonPostInit();
 }

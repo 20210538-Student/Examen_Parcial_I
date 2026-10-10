@@ -12,6 +12,7 @@
 #include "fsl_common.h"
 #include "fsl_ctimer.h"
 #include "fsl_clock.h"
+#include "fsl_lpuart.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -34,16 +35,25 @@ extern "C" {
 /* Definition of PWM period channel. */
 #define CTIMER0_PWM_PERIOD_CH kCTIMER_Match_1
 /* Definition of PWM period */
-#define CTIMER0_PWM_PERIOD 9
+#define CTIMER0_PWM_PERIOD 999
 /* Definition of channel 0 ID */
 #define CTIMER0_PWM_0_CHANNEL kCTIMER_Match_0
 /* Definition of channel 0 duty */
-#define CTIMER0_PWM_0_DUTY 2
+#define CTIMER0_PWM_0_DUTY 750
+/* Definition of peripheral ID */
+#define LPUART0_PERIPHERAL LPUART0
+/* Definition of the clock source frequency */
+#define LPUART0_CLOCK_SOURCE 12000000UL
+/* LPUART0 interrupt vector ID (number). */
+#define LPUART0_SERIAL_RX_TX_IRQN LPUART0_IRQn
+/* LPUART0 interrupt handler identifier. */
+#define LPUART0_ISRQHANDLER_RX LPUART0_IRQHandler
 
 /***********************************************************************************************************************
  * Global variables
  **********************************************************************************************************************/
 extern const ctimer_config_t CTIMER0_config;
+extern const lpuart_config_t LPUART0_config;
 
 /***********************************************************************************************************************
  * Initialization functions

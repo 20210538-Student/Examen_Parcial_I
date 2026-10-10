@@ -141,6 +141,7 @@
                   <clock_output id="CPU_clock.outFreq" value="12 MHz" locked="false" accuracy=""/>
                   <clock_output id="CTIMER0_clock.outFreq" value="12 MHz" locked="false" accuracy=""/>
                   <clock_output id="FRO_12M_clock.outFreq" value="12 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPUART0_clock.outFreq" value="12 MHz" locked="false" accuracy=""/>
                   <clock_output id="MAIN_clock.outFreq" value="12 MHz" locked="false" accuracy=""/>
                   <clock_output id="Slow_clock.outFreq" value="3 MHz" locked="false" accuracy=""/>
                   <clock_output id="System_clock.outFreq" value="12 MHz" locked="false" accuracy=""/>
@@ -152,9 +153,11 @@
                   <setting id="SCGMode" value="SIRC" locked="false"/>
                   <setting id="CTIMER0CLKDIV_HALT" value="Enable" locked="false"/>
                   <setting id="FRO_HF_PERIPHERALS_EN_CFG" value="Disabled" locked="false"/>
+                  <setting id="LPUART0CLKDIV_HALT" value="Enable" locked="false"/>
                   <setting id="MRCC.CTIMER0CLKSEL.sel" value="SCG.FRO_12M" locked="false"/>
                   <setting id="MRCC.FREQMEREFCLKSEL.sel" value="MRCC.aoi0_out0" locked="false"/>
                   <setting id="MRCC.FREQMETARGETCLKSEL.sel" value="MRCC.aoi0_out0" locked="false"/>
+                  <setting id="MRCC.LPUART0CLKSEL.sel" value="SCG.FRO_12M" locked="false"/>
                   <setting id="MRCC.OSTIMERCLKSEL.sel" value="VBAT.CLK16K_1" locked="false"/>
                   <setting id="SCG.SCSSEL.sel" value="SCG.SIRC" locked="false"/>
                   <setting id="SCG_FIRCCSR_FIRCEN_CFG" value="Disabled" locked="false"/>
@@ -362,9 +365,14 @@
                   <data type="Version" maxValue="2.3.9">2.2.2</data>
                </feature>
             </dependency>
-            <dependency resourceType="Tool" resourceId="Clocks" description="The Clocks tool is required by the Peripherals tool, but it is disabled." problem_level="2" source="Peripherals">
+            <dependency resourceType="SWComponent" resourceId="platform.drivers.lpuart" description="LPUART Driver is not found in the toolchain/IDE project. The project will not compile!" problem_level="2" source="Peripherals">
                <feature name="enabled" evaluation="equal">
-                  <data>true</data>
+                  <data type="Boolean">true</data>
+               </feature>
+            </dependency>
+            <dependency resourceType="SWComponent" resourceId="platform.drivers.lpuart" description="An unsupported version of the LPUART Driver in the toolchain/IDE project. Required: ${required_value}, actual: ${actual_value}. The project might not compile correctly." problem_level="1" source="Peripherals">
+               <feature name="version" evaluation="equivalent">
+                  <data type="Version">2.11.0</data>
                </feature>
             </dependency>
          </dependencies>
@@ -390,12 +398,28 @@
                         <data type="Boolean">true</data>
                      </feature>
                   </dependency>
+                  <dependency resourceType="ClockOutput" resourceId="LPUART0_clock" description="LPUART0_clock is inactive." problem_level="2" source="Peripherals:BOARD_InitPeripherals">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data type="Frequency" unit="Hz">0</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="LPUART0.uart_tx" description="Signal TX is not routed." problem_level="1" source="Peripherals:BOARD_InitPeripherals">
+                     <feature name="routed" evaluation="equal">
+                        <data type="Boolean">true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="LPUART0.uart_rx" description="Signal RX is not routed." problem_level="1" source="Peripherals:BOARD_InitPeripherals">
+                     <feature name="routed" evaluation="equal">
+                        <data type="Boolean">true</data>
+                     </feature>
+                  </dependency>
                </dependencies>
                <instances>
                   <instance name="NVIC" uuid="bfae73d6-afab-41fc-b34b-bc15873d0c78" type="nvic" type_id="nvic" mode="general" peripheral="NVIC" enabled="true" comment="" custom_name_enabled="false" editing_lock="false">
                      <config_set name="nvic">
                         <array name="interrupt_table">
                            <struct name="0"/>
+                           <struct name="1"/>
                         </array>
                         <array name="interrupts">
                            <struct name="0">
@@ -432,16 +456,16 @@
                            <setting name="clockSourceFreq" value="ClocksTool_DefaultInit"/>
                            <setting name="timerPrescaler" value="12"/>
                         </struct>
-                        <setting name="EnableTimerInInit" value="false"/>
+                        <setting name="EnableTimerInInit" value="true"/>
                         <struct name="pwmConfig">
                            <setting name="pwmPeriodChannel" value="kCTIMER_Match_1"/>
-                           <setting name="pwmPeriodValueStr" value="100khz"/>
+                           <setting name="pwmPeriodValueStr" value="1khz"/>
                            <setting name="enableInterrupt" value="false"/>
                            <array name="pwmChannels">
                               <struct name="0">
                                  <setting name="pwmChannelPrefixId" value="PWM_0"/>
                                  <setting name="pwmChannel" value="kCTIMER_Match_0"/>
-                                 <setting name="pwmDutyValueStr" value="8us"/>
+                                 <setting name="pwmDutyValueStr" value="0.25ms"/>
                                  <setting name="enableInterrupt" value="false"/>
                               </struct>
                            </array>
@@ -453,6 +477,56 @@
                               <setting name="priority" value="0"/>
                            </struct>
                            <setting name="callback" value="kCTIMER_NoCallback"/>
+                        </struct>
+                     </config_set>
+                  </instance>
+                  <instance name="LPUART0" uuid="c9aa4967-137e-4b40-ac2b-becd185bd9c5" type="lpuart" type_id="lpuart_2.11.0" mode="interrupts" peripheral="LPUART0" enabled="true" comment="" custom_name_enabled="false" editing_lock="false">
+                     <config_set name="lpuartConfig_t" quick_selection="QuickSelection1">
+                        <struct name="lpuartConfig">
+                           <setting name="clockSource" value="LpuartClock"/>
+                           <setting name="lpuartSrcClkFreq" value="ClocksTool_DefaultInit"/>
+                           <setting name="baudRate_Bps" value="115200"/>
+                           <setting name="parityMode" value="kLPUART_ParityDisabled"/>
+                           <setting name="dataBitsCount" value="kLPUART_EightDataBits"/>
+                           <setting name="isMsb" value="false"/>
+                           <setting name="stopBitCount" value="kLPUART_OneStopBit"/>
+                           <setting name="enableMatchAddress1" value="false"/>
+                           <setting name="matchAddress1" value="0"/>
+                           <setting name="enableMatchAddress2" value="false"/>
+                           <setting name="matchAddress2" value="0"/>
+                           <setting name="txFifoWatermark" value="0"/>
+                           <setting name="rxFifoWatermark" value="1"/>
+                           <setting name="enableRxRTS" value="false"/>
+                           <setting name="enableTxRTS" value="false"/>
+                           <setting name="enableTxCTS" value="false"/>
+                           <setting name="txCtsSource" value="kLPUART_CtsSourcePin"/>
+                           <setting name="txCtsConfig" value="kLPUART_CtsSampleAtStart"/>
+                           <setting name="txRtsPolarity" value="kLPUART_RtsPolarityLow"/>
+                           <setting name="rtsWatermark" value="0"/>
+                           <setting name="rxIdleType" value="kLPUART_IdleTypeStartBit"/>
+                           <setting name="rxIdleConfig" value="kLPUART_IdleCharacter1"/>
+                           <setting name="enableTx" value="true"/>
+                           <setting name="enableRx" value="true"/>
+                           <setting name="inverseTxd" value="false"/>
+                        </struct>
+                     </config_set>
+                     <config_set name="interruptsCfg">
+                        <set name="interrupts">
+                           <selected>
+                              <id>kLPUART_RxDataRegFullInterruptEnable</id>
+                              <id>kLPUART_RxOverrunInterruptEnable</id>
+                           </selected>
+                        </set>
+                        <struct name="interrupt_vectors">
+                           <setting name="enable_rx_tx_irq" value="true"/>
+                           <struct name="interrupt_rx_tx">
+                              <setting name="IRQn" value="LPUART0_IRQn"/>
+                              <setting name="enable_interrrupt" value="enabled"/>
+                              <setting name="enable_priority" value="false"/>
+                              <setting name="priority" value="0"/>
+                              <setting name="enable_custom_name" value="true"/>
+                              <setting name="handler_custom_name" value="LPUART0_ISRQHANDLER_RX"/>
+                           </struct>
                         </struct>
                      </config_set>
                   </instance>

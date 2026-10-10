@@ -75,7 +75,7 @@ void BOARD_InitBootClocks(void);
 #define BOARD_BOOTCLOCKFRO12M_LPSPI0_CLOCK            0UL            /* Clock consumers of LPSPI0_clock output : LPSPI0 */
 #define BOARD_BOOTCLOCKFRO12M_LPSPI1_CLOCK            0UL            /* Clock consumers of LPSPI1_clock output : LPSPI1 */
 #define BOARD_BOOTCLOCKFRO12M_LPTMR0_CLOCK            0UL            /* Clock consumers of LPTMR0_clock output : LPTMR0 */
-#define BOARD_BOOTCLOCKFRO12M_LPUART0_CLOCK           0UL            /* Clock consumers of LPUART0_clock output : LPUART0 */
+#define BOARD_BOOTCLOCKFRO12M_LPUART0_CLOCK           12000000UL     /* Clock consumers of LPUART0_clock output : LPUART0 */
 #define BOARD_BOOTCLOCKFRO12M_LPUART1_CLOCK           0UL            /* Clock consumers of LPUART1_clock output : LPUART1 */
 #define BOARD_BOOTCLOCKFRO12M_LPUART2_CLOCK           0UL            /* Clock consumers of LPUART2_clock output : LPUART2 */
 #define BOARD_BOOTCLOCKFRO12M_LPUART3_CLOCK           0UL            /* Clock consumers of LPUART3_clock output : LPUART3 */
