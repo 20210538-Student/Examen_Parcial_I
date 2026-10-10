@@ -96,7 +96,7 @@
                   <pin peripheral="GPIO1" signal="GPIO, 7" pin_num="100" pin_signal="P1_7/TRIG_OUT2/LPUART2_CTS_B/CT_INP7/CT4_MAT1/FLEXIO0_D15">
                      <pin_features>
                         <pin_feature name="direction" value="INPUT"/>
-                        <pin_feature name="gpio_per_interrupt" value="kGPIO_InterruptFallingEdge"/>
+                        <pin_feature name="gpio_per_interrupt" value="kGPIO_InterruptEitherEdge"/>
                         <pin_feature name="pull_select" value="up"/>
                         <pin_feature name="pull_enable" value="enable"/>
                      </pin_features>
@@ -140,6 +140,7 @@
                   <clock_output id="CLK_1M_clock.outFreq" value="1 MHz" locked="false" accuracy=""/>
                   <clock_output id="CPU_clock.outFreq" value="12 MHz" locked="false" accuracy=""/>
                   <clock_output id="CTIMER0_clock.outFreq" value="12 MHz" locked="false" accuracy=""/>
+                  <clock_output id="CTIMER1_clock.outFreq" value="12 MHz" locked="false" accuracy=""/>
                   <clock_output id="FRO_12M_clock.outFreq" value="12 MHz" locked="false" accuracy=""/>
                   <clock_output id="LPUART0_clock.outFreq" value="12 MHz" locked="false" accuracy=""/>
                   <clock_output id="MAIN_clock.outFreq" value="12 MHz" locked="false" accuracy=""/>
@@ -152,9 +153,11 @@
                <clock_settings>
                   <setting id="SCGMode" value="SIRC" locked="false"/>
                   <setting id="CTIMER0CLKDIV_HALT" value="Enable" locked="false"/>
+                  <setting id="CTIMER1CLKDIV_HALT" value="Enable" locked="false"/>
                   <setting id="FRO_HF_PERIPHERALS_EN_CFG" value="Disabled" locked="false"/>
                   <setting id="LPUART0CLKDIV_HALT" value="Enable" locked="false"/>
                   <setting id="MRCC.CTIMER0CLKSEL.sel" value="SCG.FRO_12M" locked="false"/>
+                  <setting id="MRCC.CTIMER1CLKSEL.sel" value="SCG.FRO_12M" locked="false"/>
                   <setting id="MRCC.FREQMEREFCLKSEL.sel" value="MRCC.aoi0_out0" locked="false"/>
                   <setting id="MRCC.FREQMETARGETCLKSEL.sel" value="MRCC.aoi0_out0" locked="false"/>
                   <setting id="MRCC.LPUART0CLKSEL.sel" value="SCG.FRO_12M" locked="false"/>
@@ -413,6 +416,11 @@
                         <data type="Boolean">true</data>
                      </feature>
                   </dependency>
+                  <dependency resourceType="ClockOutput" resourceId="CTIMER1_clock" description="CTIMER1_clock is inactive." problem_level="2" source="Peripherals:BOARD_InitPeripherals">
+                     <feature name="frequency" evaluation="greaterThan">
+                        <data type="Frequency" unit="Hz">0</data>
+                     </feature>
+                  </dependency>
                </dependencies>
                <instances>
                   <instance name="NVIC" uuid="bfae73d6-afab-41fc-b34b-bc15873d0c78" type="nvic" type_id="nvic" mode="general" peripheral="NVIC" enabled="true" comment="" custom_name_enabled="false" editing_lock="false">
@@ -420,6 +428,7 @@
                         <array name="interrupt_table">
                            <struct name="0"/>
                            <struct name="1"/>
+                           <struct name="2"/>
                         </array>
                         <array name="interrupts">
                            <struct name="0">
@@ -476,7 +485,8 @@
                               <setting name="enable_priority" value="false"/>
                               <setting name="priority" value="0"/>
                            </struct>
-                           <setting name="callback" value="kCTIMER_NoCallback"/>
+                           <setting name="callback" value="kCTIMER_SingleCallback"/>
+                           <setting name="singleCallback" value="CTIMER_ISR_INTERRUPT"/>
                         </struct>
                      </config_set>
                   </instance>
@@ -527,6 +537,39 @@
                               <setting name="enable_custom_name" value="true"/>
                               <setting name="handler_custom_name" value="LPUART0_ISRQHANDLER_RX"/>
                            </struct>
+                        </struct>
+                     </config_set>
+                  </instance>
+                  <instance name="CTIMER1" uuid="37fd3bab-293b-42bd-87fd-655d8d8f09a2" type="ctimer" type_id="ctimer_2.2.2" mode="Capture_Match" peripheral="CTIMER1" enabled="true" comment="" custom_name_enabled="false" editing_lock="false">
+                     <config_set name="fsl_ctimer">
+                        <struct name="ctimerConfig">
+                           <setting name="mode" value="kCTIMER_TimerMode"/>
+                           <setting name="clockSource" value="FunctionClock"/>
+                           <setting name="clockSourceFreq" value="ClocksTool_DefaultInit"/>
+                           <setting name="timerPrescaler" value="12"/>
+                        </struct>
+                        <setting name="EnableTimerInInit" value="true"/>
+                        <array name="matchChannels">
+                           <struct name="0">
+                              <setting name="matchChannelPrefixId" value="Match_0"/>
+                              <setting name="matchChannel" value="kCTIMER_Match_0"/>
+                              <setting name="matchValueStr" value="1ms"/>
+                              <setting name="enableCounterReset" value="true"/>
+                              <setting name="enableCounterStop" value="false"/>
+                              <setting name="outControl" value="kCTIMER_Output_NoAction"/>
+                              <setting name="outPinInitValue" value="low"/>
+                              <setting name="enableInterrupt" value="true"/>
+                           </struct>
+                        </array>
+                        <array name="captureChannels"/>
+                        <struct name="interruptCallbackConfig">
+                           <struct name="interrupt">
+                              <setting name="IRQn" value="CTIMER1_IRQn"/>
+                              <setting name="enable_priority" value="false"/>
+                              <setting name="priority" value="0"/>
+                           </struct>
+                           <setting name="callback" value="kCTIMER_SingleCallback"/>
+                           <setting name="singleCallback" value="Tick_timer_CTIMER"/>
                         </struct>
                      </config_set>
                   </instance>

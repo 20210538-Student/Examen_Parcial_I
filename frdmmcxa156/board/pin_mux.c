@@ -48,7 +48,7 @@ BOARD_InitPins:
     slew_rate: fast, open_drain: disable, drive_strength: low, pull_select: up, pull_enable: enable, input_buffer: enable, invert_input: normal}
   - {pin_num: '78', peripheral: LPUART0, signal: RX, pin_signal: P0_2/TDO/SWO/LPUART0_RXD/LPSPI0_SCK/CT0_MAT0/UTICK_CAP0/FLEXIO0_D2, pull_select: up, pull_enable: enable}
   - {pin_num: '79', peripheral: LPUART0, signal: TX, pin_signal: P0_3/TDI/LPUART0_TXD/LPSPI0_SDO/CT0_MAT1/UTICK_CAP1/FLEXIO0_D3/CMP0_OUT}
-  - {pin_num: '100', peripheral: GPIO1, signal: 'GPIO, 7', pin_signal: P1_7/TRIG_OUT2/LPUART2_CTS_B/CT_INP7/CT4_MAT1/FLEXIO0_D15, direction: INPUT, gpio_per_interrupt: kGPIO_InterruptFallingEdge,
+  - {pin_num: '100', peripheral: GPIO1, signal: 'GPIO, 7', pin_signal: P1_7/TRIG_OUT2/LPUART2_CTS_B/CT_INP7/CT4_MAT1/FLEXIO0_D15, direction: INPUT, gpio_per_interrupt: kGPIO_InterruptEitherEdge,
     pull_select: up, pull_enable: enable}
   - {pin_num: '89', peripheral: CTIMER0, signal: 'MATCH, 0', pin_signal: P0_22/LPUART0_RTS_B/CT_INP2/CT0_MAT0/FLEXIO0_D6}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
@@ -179,8 +179,8 @@ void BOARD_InitPins(void)
     /* Initialize GPIO functionality on pin PIO3_12 (pin 63)  */
     GPIO_PinInit(BOARD_INITPINS_LED_RED_GPIO, BOARD_INITPINS_LED_RED_PIN, &LED_RED_config);
 
-    /* Interrupt configuration on GPIO1_7 (pin 100): Interrupt on falling edge */
-    GPIO_SetPinInterruptConfig(BOARD_INITPINS_SW_2_GPIO, BOARD_INITPINS_SW_2_PIN, kGPIO_InterruptFallingEdge);
+    /* Interrupt configuration on GPIO1_7 (pin 100): Interrupt on either edge */
+    GPIO_SetPinInterruptConfig(BOARD_INITPINS_SW_2_GPIO, BOARD_INITPINS_SW_2_PIN, kGPIO_InterruptEitherEdge);
 }
 /***********************************************************************************************************************
  * EOF

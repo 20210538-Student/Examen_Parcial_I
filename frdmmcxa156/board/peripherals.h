@@ -48,12 +48,33 @@ extern "C" {
 #define LPUART0_SERIAL_RX_TX_IRQN LPUART0_IRQn
 /* LPUART0 interrupt handler identifier. */
 #define LPUART0_ISRQHANDLER_RX LPUART0_IRQHandler
+/* Definition of peripheral ID */
+#define CTIMER1_PERIPHERAL CTIMER1
+/* Timer tick frequency in Hz (input frequency of the timer) */
+#define CTIMER1_TICK_FREQ 1000000UL
+/* Timer tick period in ns (input period of the timer) */
+#define CTIMER1_TICK_PERIOD 1000UL
+/* Definition of PWM period channel. */
+#define CTIMER1_PWM_PERIOD_CH kCTIMER_Match_0
+/* Definition of channel 0 ID */
+#define CTIMER1_MATCH_0_CHANNEL kCTIMER_Match_0
+/* CTIMER1 interrupt vector ID (number). */
+#define CTIMER1_TIMER_IRQN CTIMER1_IRQn
 
 /***********************************************************************************************************************
  * Global variables
  **********************************************************************************************************************/
 extern const ctimer_config_t CTIMER0_config;
 extern const lpuart_config_t LPUART0_config;
+extern const ctimer_config_t CTIMER1_config;
+extern const ctimer_match_config_t CTIMER1_Match_0_config;
+
+/***********************************************************************************************************************
+ * Callback functions
+ **********************************************************************************************************************/
+  /* Single callback function declaration */
+extern void Tick_timer_CTIMER(uint32_t flags);
+extern ctimer_callback_t CTIMER1_callback[];
 
 /***********************************************************************************************************************
  * Initialization functions

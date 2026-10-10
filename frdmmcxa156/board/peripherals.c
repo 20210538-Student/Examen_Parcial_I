@@ -71,6 +71,7 @@ instance:
     - interrupt_table:
       - 0: []
       - 1: []
+      - 2: []
     - interrupts:
       - 0:
         - channelId: 'SW2'
@@ -123,7 +124,8 @@ instance:
         - IRQn: 'CTIMER0_IRQn'
         - enable_priority: 'false'
         - priority: '0'
-      - callback: 'kCTIMER_NoCallback'
+      - callback: 'kCTIMER_SingleCallback'
+      - singleCallback: 'CTIMER_ISR_INTERRUPT'
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 /* clang-format on */
 const ctimer_config_t CTIMER0_config = {
@@ -226,6 +228,73 @@ static void LPUART0_init(void) {
 }
 
 /***********************************************************************************************************************
+ * CTIMER1 initialization code
+ **********************************************************************************************************************/
+/* clang-format off */
+/* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
+instance:
+- name: 'CTIMER1'
+- type: 'ctimer'
+- mode: 'Capture_Match'
+- custom_name_enabled: 'false'
+- type_id: 'ctimer_2.2.2'
+- functional_group: 'BOARD_InitPeripherals'
+- peripheral: 'CTIMER1'
+- config_sets:
+  - fsl_ctimer:
+    - ctimerConfig:
+      - mode: 'kCTIMER_TimerMode'
+      - clockSource: 'FunctionClock'
+      - clockSourceFreq: 'ClocksTool_DefaultInit'
+      - timerPrescaler: '12'
+    - EnableTimerInInit: 'true'
+    - matchChannels:
+      - 0:
+        - matchChannelPrefixId: 'Match_0'
+        - matchChannel: 'kCTIMER_Match_0'
+        - matchValueStr: '1ms'
+        - enableCounterReset: 'true'
+        - enableCounterStop: 'false'
+        - outControl: 'kCTIMER_Output_NoAction'
+        - outPinInitValue: 'low'
+        - enableInterrupt: 'true'
+    - captureChannels: []
+    - interruptCallbackConfig:
+      - interrupt:
+        - IRQn: 'CTIMER1_IRQn'
+        - enable_priority: 'false'
+        - priority: '0'
+      - callback: 'kCTIMER_SingleCallback'
+      - singleCallback: 'Tick_timer_CTIMER'
+ * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
+/* clang-format on */
+const ctimer_config_t CTIMER1_config = {
+  .mode = kCTIMER_TimerMode,
+  .input = kCTIMER_Capture_0,
+  .prescale = 11
+};
+const ctimer_match_config_t CTIMER1_Match_0_config = {
+  .matchValue = 999,
+  .enableCounterReset = true,
+  .enableCounterStop = false,
+  .outControl = kCTIMER_Output_NoAction,
+  .outPinInitState = false,
+  .enableInterrupt = true
+};
+/* Single callback functions definition */
+ctimer_callback_t CTIMER1_callback[] = {Tick_timer_CTIMER};
+
+static void CTIMER1_init(void) {
+  /* CTIMER1 peripheral initialization */
+  CTIMER_Init(CTIMER1_PERIPHERAL, &CTIMER1_config);
+  /* Match channel 0 of CTIMER1 peripheral initialization */
+  CTIMER_SetupMatch(CTIMER1_PERIPHERAL, CTIMER1_MATCH_0_CHANNEL, &CTIMER1_Match_0_config);
+  CTIMER_RegisterCallBack(CTIMER1_PERIPHERAL, CTIMER1_callback, kCTIMER_SingleCallback);
+  /* Start the timer */
+  CTIMER_StartTimer(CTIMER1_PERIPHERAL);
+}
+
+/***********************************************************************************************************************
  * Initialization functions
  **********************************************************************************************************************/
 static void BOARD_InitPeripherals_CommonPostInit(void)
@@ -239,6 +308,7 @@ void BOARD_InitPeripherals(void)
   /* Initialize components */
   CTIMER0_init();
   LPUART0_init();
+  CTIMER1_init();
   /* Common post-initialization */
   BOARD_InitPeripherals_CommonPostInit();
 }
