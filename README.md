@@ -77,3 +77,5 @@ El firmware ha sido sometido y validado contra la matriz de pruebas de aceptaci�
 5. Compilar el proyecto (*Build*) asegurando cero errores y cero advertencias.
 6. Iniciar la sesión de depuración (*Debug*) y presionar **Resume** para ejecutar o ir al apartado de debug probes y flashear directamente en el apartado de LinkServer, seleccionar la carpeta y presionar "Run".
 7. Abrir un monitor serial (como el de VS Code o PuTTY) configurado a **115200 baudios** para interactuar con la consola de comandos.
+
+#VIDEO LINK: https://vimeo.com/1234896067?share=copy&fl=sv&fe=ci
